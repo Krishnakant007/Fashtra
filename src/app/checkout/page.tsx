@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 
 const Checkout = () => {
@@ -12,34 +13,62 @@ const Checkout = () => {
   }, []);
 
   const handlePayment = async () => {
-    const orderData = await fetch("/api/razorpay", { method: "POST" }).then((res) => res.json());
+    try {
+      const orderData = await fetch("/api/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ amount: 50000 }), // Example: ₹500 (50000 paise)
+      }).then((res) => res.json());
 
-    const options = {
-      key: "your_razorpay_key", // Replace with your Razorpay Key
-      amount: orderData.amount,
-      currency: "INR",
-      name: "FashionX",
-      description: "Clothing Purchase",
-      order_id: orderData.id,
-      handler: function (response: any) {
-        alert("Payment Successful: " + response.razorpay_payment_id);
-      },
-      prefill: {
-        name: form.name,
-        contact: form.phone,
-      },
-    };
+      if (!orderData.orderId) throw new Error("Order creation failed");
 
-    const razorpay = new (window as any).Razorpay(options);
-    razorpay.open();
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY, // Use env variable
+        amount: 50000, // Must match the backend amount
+        currency: "INR",
+        name: "FashionX",
+        description: "Clothing Purchase",
+        order_id: orderData.orderId,
+        handler: function (response: { razorpay_payment_id: string }) {
+          alert("Payment Successful: " + response.razorpay_payment_id);
+        },
+        prefill: {
+          name: form.name,
+          contact: form.phone,
+        },
+      };
+
+      const razorpay = new (window as any).Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      console.error("Payment Error:", error);
+      alert("Payment failed. Please try again.");
+    }
   };
 
   return (
     <div className="p-6">
       <h2 className="text-3xl font-bold">Checkout</h2>
-      <input type="text" placeholder="Full Name" className="border p-2 w-full my-2" onChange={(e) => setForm({ ...form, name: e.target.value })} />
-      <input type="text" placeholder="Address" className="border p-2 w-full my-2" onChange={(e) => setForm({ ...form, address: e.target.value })} />
-      <input type="text" placeholder="Phone Number" className="border p-2 w-full my-2" onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+      <input
+        type="text"
+        placeholder="Full Name"
+        className="border p-2 w-full my-2"
+        onChange={(e) => setForm({ ...form, name: e.target.value })}
+      />
+      <input
+        type="text"
+        placeholder="Address"
+        className="border p-2 w-full my-2"
+        onChange={(e) => setForm({ ...form, address: e.target.value })}
+      />
+      <input
+        type="text"
+        placeholder="Phone Number"
+        className="border p-2 w-full my-2"
+        onChange={(e) => setForm({ ...form, phone: e.target.value })}
+      />
       <button className="bg-black text-white px-4 py-2 mt-2" onClick={handlePayment}>
         Pay Now
       </button>
