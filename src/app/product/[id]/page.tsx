@@ -1280,12 +1280,224 @@
 
 
 
+// "use client";
+
+// import React, { useState, useEffect } from "react";
+// import { useParams, useRouter } from "next/navigation";
+// import products from "@/data/products";
+// import Script from "next/script";
+
+// declare global {
+//   interface Window {
+//     Razorpay: any;
+//   }
+// }
+
+// const ProductPage = () => {
+//   const { id } = useParams();
+//   const router = useRouter();
+//   const product = products.find((p) => p.id === id);
+
+//   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+//   const [showForm, setShowForm] = useState(false);
+//   const [formData, setFormData] = useState({ name: "", mobile: "", address: "", pincode: "" });
+//   const [isProcessing, setIsProcessing] = useState(false);
+//   const [stockLeft, setStockLeft] = useState<number>(0);
+//   const [mobileError, setMobileError] = useState<string | null>(null);
+//   const [pincodeError, setPincodeError] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     setStockLeft(Math.floor(Math.random() * 20) + 5);
+//   }, []);
+
+//   if (!product) {
+//     return <div className="text-center text-red-500">Product Not Found!</div>;
+//   }
+
+//   const handleBuyNow = () => setShowForm(true);
+
+//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const { name, value } = e.target;
+
+//     if (name === "mobile") {
+//       if (!/^\d{0,10}$/.test(value)) return;
+//       setMobileError(value.length === 10 ? null : "Mobile number must be 10 digits.");
+//     }
+
+//     if (name === "pincode") {
+//       if (!/^\d{0,6}$/.test(value)) return;
+//       setPincodeError(value.length === 6 ? null : "Pincode must be exactly 6 digits.");
+//     }
+
+//     setFormData({ ...formData, [name]: value });
+//   };
+
+//   const handlePayment = async () => {
+//     if (!selectedSize || !formData.name || !formData.mobile || !formData.address || !formData.pincode) {
+//       alert("Please fill all fields.");
+//       return;
+//     }
+//     if (formData.mobile.length !== 10) {
+//       alert("Mobile number must be exactly 10 digits.");
+//       return;
+//     }
+//     if (formData.pincode.length !== 6) {
+//       alert("Pincode must be exactly 6 digits.");
+//       return;
+//     }
+
+//     setIsProcessing(true);
+//     try {
+//       const response = await fetch("/api/create-order", { method: "POST" });
+//       const data = await response.json();
+
+//       const options = {
+//         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+//         amount: product.price * 100,
+//         currency: "INR",
+//         name: formData.name,
+//         description: `${product.name} - Size: ${selectedSize}`,
+//         order_id: data.orderId,
+//         handler: function (response: any) {
+//           console.log("Payment successful", response);
+//           const purchaseHistory = JSON.parse(localStorage.getItem("history") || "[]");
+//           purchaseHistory.push({
+//             ...product,
+//             size: selectedSize,
+//             name: formData.name,
+//             mobile: formData.mobile,
+//             address: formData.address,
+//             pincode: formData.pincode,
+//             paymentId: response.razorpay_payment_id,
+//           });
+//           localStorage.setItem("history", JSON.stringify(purchaseHistory));
+//           router.push("/success");
+//         },
+//         prefill: { name: formData.name, contact: formData.mobile },
+//         theme: { color: "#3399cc" },
+//       };
+
+//       const rzp1 = new window.Razorpay(options);
+//       rzp1.open();
+//     } catch (error) {
+//       console.error("Payment failed", error);
+//     } finally {
+//       setIsProcessing(false);
+//     }
+//   };
+
+//   return (
+//     <div className="flex flex-col lg:flex-row items-center min-h-screen bg-gray-100 p-4">
+//       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+
+//       <div className="w-full lg:w-1/2 flex justify-center">
+//         <img src={product.image} alt={product.name} className="w-96 h-auto rounded-lg shadow-lg" />
+//       </div>
+
+//       <div className="w-full lg:w-1/2 bg-white rounded-lg shadow-lg p-6">
+//         <h1 className="text-2xl font-bold">{product.name}</h1>
+//         <p className="text-gray-700 text-lg">Price: ₹{product.price}</p>
+//         <p className="text-red-500 font-semibold">Stock Left: {stockLeft}</p>
+//         <p className="text-gray-500">Expected Delivery: {product.deliveryTime}</p>
+
+//         <div className="mt-4">
+//           <label className="block text-gray-600 font-semibold mb-1">Select Size:</label>
+//           <div className="flex gap-2">
+//             {product.sizes.map((size) => (
+//               <button
+//                 key={size}
+//                 onClick={() => setSelectedSize(size)}
+//                 className={`px-4 py-2 border rounded-lg ${
+//                   selectedSize === size ? "bg-blue-500 text-white" : "bg-gray-200"
+//                 }`}
+//               >
+//                 {size}
+//               </button>
+//             ))}
+//           </div>
+//         </div>
+
+//         {!showForm ? (
+//           <button
+//             onClick={handleBuyNow}
+//             disabled={!selectedSize}
+//             className={`mt-4 w-full px-4 py-2 rounded-lg ${
+//               selectedSize ? "bg-blue-500 text-white" : "bg-gray-300 cursor-not-allowed"
+//             }`}
+//           >
+//             Buy Now
+//           </button>
+//         ) : (
+//           <div className="mt-4">
+//             <input
+//               name="name"
+//               placeholder="Your Name"
+//               value={formData.name}
+//               onChange={handleChange}
+//               className="w-full px-3 py-2 mb-2 border rounded"
+//             />
+//             <input
+//               name="mobile"
+//               placeholder="Mobile No."
+//               value={formData.mobile}
+//               onChange={handleChange}
+//               className="w-full px-3 py-2 mb-2 border rounded"
+//               maxLength={10}
+//             />
+//             {mobileError && <p className="text-red-500 text-sm">{mobileError}</p>}
+
+//             <input
+//               name="address"
+//               placeholder="Address"
+//               value={formData.address}
+//               onChange={handleChange}
+//               className="w-full px-3 py-2 mb-2 border rounded"
+//             />
+
+//             <input
+//               name="pincode"
+//               placeholder="Enter Pincode"
+//               value={formData.pincode}
+//               onChange={handleChange}
+//               className="w-full px-3 py-2 mb-2 border rounded"
+//               maxLength={6}
+//             />
+//             {pincodeError && <p className="text-red-500 text-sm">{pincodeError}</p>}
+
+//             <button
+//               onClick={handlePayment}
+//               disabled={isProcessing || !selectedSize || !formData.name || !formData.mobile || !formData.address || !formData.pincode}
+//               className={`w-full px-4 py-2 rounded-lg ${
+//                 isProcessing || !selectedSize || !formData.name || !formData.mobile || !formData.address || !formData.pincode
+//                   ? "bg-gray-300 cursor-not-allowed"
+//                   : "bg-green-500 text-white"
+//               }`}
+//             >
+//               {isProcessing ? "Processing..." : "Proceed to Pay"}
+//             </button>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ProductPage;
+
+
+
+
+
+
+
+
 "use client";
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import products from "@/data/products";
 import Script from "next/script";
+import Image from "next/image";
 
 declare global {
   interface Window {
@@ -1296,7 +1508,7 @@ declare global {
 const ProductPage = () => {
   const { id } = useParams();
   const router = useRouter();
-  const product = products.find((p) => p.id === id);
+  const product = products.find((p) => p.id === String(id)); // ✅ Convert `id` to string
 
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -1351,8 +1563,13 @@ const ProductPage = () => {
       const response = await fetch("/api/create-order", { method: "POST" });
       const data = await response.json();
 
+      if (!window.Razorpay) {
+        alert("Razorpay SDK not loaded.");
+        return;
+      }
+
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "", // ✅ Ensure Env variable is present
         amount: product.price * 100,
         currency: "INR",
         name: formData.name,
@@ -1388,32 +1605,43 @@ const ProductPage = () => {
 
   return (
     <div className="flex flex-col lg:flex-row items-center min-h-screen bg-gray-100 p-4">
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
 
       <div className="w-full lg:w-1/2 flex justify-center">
-        <img src={product.image} alt={product.name} className="w-96 h-auto rounded-lg shadow-lg" />
+        <Image
+          src={product.image}
+          alt={product.name}
+          width={400}
+          height={400}
+          className="rounded-lg shadow-lg"
+          priority
+        />
       </div>
 
       <div className="w-full lg:w-1/2 bg-white rounded-lg shadow-lg p-6">
         <h1 className="text-2xl font-bold">{product.name}</h1>
-        <p className="text-gray-700 text-lg">Price: ₹{product.price}</p>
+        <p className="text-gray-700 text-lg">Price: ₹{product.price.toLocaleString("en-IN")}</p>
         <p className="text-red-500 font-semibold">Stock Left: {stockLeft}</p>
         <p className="text-gray-500">Expected Delivery: {product.deliveryTime}</p>
 
         <div className="mt-4">
           <label className="block text-gray-600 font-semibold mb-1">Select Size:</label>
           <div className="flex gap-2">
-            {product.sizes.map((size) => (
-              <button
-                key={size}
-                onClick={() => setSelectedSize(size)}
-                className={`px-4 py-2 border rounded-lg ${
-                  selectedSize === size ? "bg-blue-500 text-white" : "bg-gray-200"
-                }`}
-              >
-                {size}
-              </button>
-            ))}
+            {product.sizes?.length > 0 ? (
+              product.sizes.map((size) => (
+                <button
+                  key={size}
+                  onClick={() => setSelectedSize(size)}
+                  className={`px-4 py-2 border rounded-lg ${
+                    selectedSize === size ? "bg-blue-500 text-white" : "bg-gray-200"
+                  }`}
+                >
+                  {size}
+                </button>
+              ))
+            ) : (
+              <p className="text-gray-500">No sizes available</p>
+            )}
           </div>
         </div>
 
@@ -1429,50 +1657,15 @@ const ProductPage = () => {
           </button>
         ) : (
           <div className="mt-4">
-            <input
-              name="name"
-              placeholder="Your Name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full px-3 py-2 mb-2 border rounded"
-            />
-            <input
-              name="mobile"
-              placeholder="Mobile No."
-              value={formData.mobile}
-              onChange={handleChange}
-              className="w-full px-3 py-2 mb-2 border rounded"
-              maxLength={10}
-            />
+            <input name="name" placeholder="Your Name" value={formData.name} onChange={handleChange} className="w-full px-3 py-2 mb-2 border rounded" />
+            <input name="mobile" placeholder="Mobile No." value={formData.mobile} onChange={handleChange} className="w-full px-3 py-2 mb-2 border rounded" maxLength={10} />
             {mobileError && <p className="text-red-500 text-sm">{mobileError}</p>}
 
-            <input
-              name="address"
-              placeholder="Address"
-              value={formData.address}
-              onChange={handleChange}
-              className="w-full px-3 py-2 mb-2 border rounded"
-            />
-
-            <input
-              name="pincode"
-              placeholder="Enter Pincode"
-              value={formData.pincode}
-              onChange={handleChange}
-              className="w-full px-3 py-2 mb-2 border rounded"
-              maxLength={6}
-            />
+            <input name="address" placeholder="Address" value={formData.address} onChange={handleChange} className="w-full px-3 py-2 mb-2 border rounded" />
+            <input name="pincode" placeholder="Enter Pincode" value={formData.pincode} onChange={handleChange} className="w-full px-3 py-2 mb-2 border rounded" maxLength={6} />
             {pincodeError && <p className="text-red-500 text-sm">{pincodeError}</p>}
 
-            <button
-              onClick={handlePayment}
-              disabled={isProcessing || !selectedSize || !formData.name || !formData.mobile || !formData.address || !formData.pincode}
-              className={`w-full px-4 py-2 rounded-lg ${
-                isProcessing || !selectedSize || !formData.name || !formData.mobile || !formData.address || !formData.pincode
-                  ? "bg-gray-300 cursor-not-allowed"
-                  : "bg-green-500 text-white"
-              }`}
-            >
+            <button onClick={handlePayment} disabled={isProcessing || !selectedSize || !formData.name || !formData.mobile || !formData.address || !formData.pincode} className={`w-full px-4 py-2 rounded-lg ${isProcessing ? "bg-gray-300" : "bg-green-500 text-white"}`}>
               {isProcessing ? "Processing..." : "Proceed to Pay"}
             </button>
           </div>
@@ -1483,4 +1676,3 @@ const ProductPage = () => {
 };
 
 export default ProductPage;
-

@@ -74,12 +74,35 @@
 // export default ProductCard;
 
 
+// import Link from "next/link";
+
+// interface ProductCardProps {
+//   id: string;
+//   name: string;
+//   price: string;
+//   image: string;
+// }
+
+// export default function ProductCard({ id, name, price, image }: ProductCardProps) {
+//   return (
+//     <Link href={`/product/${id}`}>
+//       <div className="border p-4 rounded-lg cursor-pointer hover:shadow-lg transition">
+//         <img src={image} alt={name} className="w-full h-48 object-cover rounded" />
+//         <h2 className="text-lg font-bold mt-2">{name}</h2>
+//         <p className="text-gray-600">₹{price}</p>
+//       </div>
+//     </Link>
+//   );
+// }
+
+
 import Link from "next/link";
+import Image from "next/image";
 
 interface ProductCardProps {
   id: string;
   name: string;
-  price: string;
+  price: number;
   image: string;
 }
 
@@ -87,9 +110,16 @@ export default function ProductCard({ id, name, price, image }: ProductCardProps
   return (
     <Link href={`/product/${id}`}>
       <div className="border p-4 rounded-lg cursor-pointer hover:shadow-lg transition">
-        <img src={image} alt={name} className="w-full h-48 object-cover rounded" />
+        <Image 
+          src={image} 
+          alt={name} 
+          width={300} 
+          height={192} 
+          className="w-full h-48 object-cover rounded"
+          priority
+        />
         <h2 className="text-lg font-bold mt-2">{name}</h2>
-        <p className="text-gray-600">₹{price}</p>
+        <p className="text-gray-600">₹{price.toLocaleString("en-IN")}</p>
       </div>
     </Link>
   );
