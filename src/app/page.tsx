@@ -342,10 +342,62 @@
 // export default HomePage;
 
 
+// "use client";
+
+// import React from "react";
+// import Link from "next/link";
+// import products from "@/data/products";
+
+// const HomePage = () => {
+//   return (
+//     <div className="bg-gray-100 min-h-screen">
+//       {/* Header Section */}
+//       <header className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
+//         <h1 className="text-xl font-bold">My Shop</h1>
+//       </header>
+
+//       {/* Categories Section (Without Icons) */}
+//       <div className="flex justify-center gap-6 mt-4">
+//         <Link href="/category/male" className="text-gray-700 font-semibold">Boys</Link>
+//         <Link href="/category/female" className="text-gray-700 font-semibold">Girls</Link>
+//         <Link href="/category/kids" className="text-gray-700 font-semibold">Kids</Link>
+//       </div>
+
+//       {/* Product Listing */}
+//       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+//         {products.map((product) => (
+//           <div key={product.id} className="bg-white shadow-lg rounded-lg p-4">
+//             <img
+//               src={product.image}
+//               alt={product.name}
+//               className="w-full h-64 object-cover rounded"
+//             />
+//             <h2 className="text-lg font-semibold mt-2">{product.name}</h2>
+//             <p className="text-gray-700">Price: ₹{product.price}</p>
+//             <div className="mt-3">
+//               <Link
+//                 href={`/product/${product.id}`}
+//                 className="block bg-green-500 text-white text-center px-4 py-2 rounded"
+//               >
+//                 Buy Now
+//               </Link>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default HomePage;
+
+
+
 "use client";
 
 import React from "react";
 import Link from "next/link";
+
 import products from "@/data/products";
 
 const HomePage = () => {
@@ -356,7 +408,7 @@ const HomePage = () => {
         <h1 className="text-xl font-bold">My Shop</h1>
       </header>
 
-      {/* Categories Section (Without Icons) */}
+      {/* Categories Section */}
       <div className="flex justify-center gap-6 mt-4">
         <Link href="/category/male" className="text-gray-700 font-semibold">Boys</Link>
         <Link href="/category/female" className="text-gray-700 font-semibold">Girls</Link>
@@ -368,8 +420,10 @@ const HomePage = () => {
         {products.map((product) => (
           <div key={product.id} className="bg-white shadow-lg rounded-lg p-4">
             <img
-              src={product.image}
+            src={product.image}
               alt={product.name}
+              width='300'
+              height='300'
               className="w-full h-64 object-cover rounded"
             />
             <h2 className="text-lg font-semibold mt-2">{product.name}</h2>

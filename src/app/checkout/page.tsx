@@ -2,6 +2,12 @@
 
 import { useEffect, useState } from "react";
 
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
 const Checkout = () => {
   const [form, setForm] = useState({ name: "", address: "", phone: "" });
 
@@ -13,6 +19,7 @@ const Checkout = () => {
   }, []);
 
   const handlePayment = async () => {
+<<<<<<< HEAD
     try {
       const orderData = await fetch("/api/create-order", {
         method: "POST",
@@ -46,6 +53,28 @@ const Checkout = () => {
       console.error("Payment Error:", error);
       alert("Payment failed. Please try again.");
     }
+=======
+    const orderData = await fetch("/api/create-order", { method: "POST" }).then((res) => res.json());
+
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY, // ✅ Use env variable
+      amount: orderData.amount,
+      currency: "INR",
+      name: "FashionX",
+      description: "Clothing Purchase",
+      order_id: orderData.orderId, // ✅ Fix order ID reference
+      handler: (response: { razorpay_payment_id: string }) => {
+        alert("Payment Successful! ID: " + response.razorpay_payment_id);
+      },
+      prefill: {
+        name: form.name,
+        contact: form.phone,
+      },
+    };
+
+    const razorpay = new window.Razorpay(options);
+    razorpay.open();
+>>>>>>> 41022bc (Fixed)
   };
 
   return (

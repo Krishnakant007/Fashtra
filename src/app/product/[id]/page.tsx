@@ -1497,7 +1497,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import products from "@/data/products";
 import Script from "next/script";
-import Image from "next/image";
+
 
 declare global {
   interface Window {
@@ -1608,13 +1608,13 @@ const ProductPage = () => {
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
 
       <div className="w-full lg:w-1/2 flex justify-center">
-        <Image
+        <img
           src={product.image}
           alt={product.name}
           width={400}
           height={400}
           className="rounded-lg shadow-lg"
-          priority
+       
         />
       </div>
 
