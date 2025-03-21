@@ -471,6 +471,15 @@ const products = [
     sizes: ["S", "M", "L", "XL"],
     deliveryTime: "5-7 working days",
   },
+  {
+    id: "44",
+    name: "Lacra Men's pants Pack of 2",
+    price: "5",
+    image: "/images/panty-3.jpeg",
+    category: "male",
+    sizes: ["S", "M", "L", "XL"],
+    deliveryTime: "5-7 working days",
+  },
 ];
 
 export default products;
