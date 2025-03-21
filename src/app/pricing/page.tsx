@@ -37,8 +37,8 @@ export default function PricingPage() {
   
         <h2 className="text-xl font-semibold mt-6">3. Shipping Charges</h2>
         <p className="mt-2">
-          - **Standard Delivery**: ₹50 (Free for orders above ₹999).  
-          - **Express Delivery**: ₹150 (Delivery within 24-48 hours).  
+          - **Standard Delivery**: ₹50 (Free for orders above ₹499).  
+          
         </p>
   
         <h2 className="text-xl font-semibold mt-6">4. Payment Methods</h2>
@@ -46,7 +46,7 @@ export default function PricingPage() {
           - **Credit/Debit Cards** (Visa, Mastercard, Rupay).  
           - **UPI & Wallets** (Google Pay, PhonePe, Paytm).  
           - **Net Banking** (All major banks).  
-          - **Cash on Delivery (COD)**: Available for orders below ₹5,000.  
+      .  
         </p>
   
         <h2 className="text-xl font-semibold mt-6">5. Refund & Cancellation Policy</h2>
@@ -60,7 +60,7 @@ export default function PricingPage() {
           If you have any questions regarding pricing, please contact us:  
         </p>
         <p className="mt-2"><strong>Email:</strong> support@fashtra.com</p>
-        <p className="mt-2"><strong>Phone:</strong> +91 XXXXXXXXXX</p>
+        <p className="mt-2"><strong>Phone:</strong> +918805835423</p>
       </div>
     );
   }
