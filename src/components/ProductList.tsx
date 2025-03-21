@@ -11,7 +11,8 @@ const ProductList: React.FC<ProductListProps> = ({ category }) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
       {filteredProducts.map((product) => (
-        <ProductCard key={product.id} {...product} />
+       <ProductCard key={product.id} {...product} price={Number(product.price)} />
+
       ))}
     </div>
   );

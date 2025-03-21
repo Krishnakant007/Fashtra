@@ -1569,33 +1569,39 @@ const ProductPage = () => {
       }
 
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "", // ✅ Ensure Env variable is present
-        amount: product.price * 100,
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "", 
+        amount: Number(product.price) * 100,  // ✅ Ensure price is a valid number
         currency: "INR",
         name: formData.name,
         description: `${product.name} - Size: ${selectedSize}`,
-        order_id: data.orderId,
+        order_id: data?.orderId || "", // ✅ Avoid undefined error
         handler: function (response: any) {
           console.log("Payment successful", response);
+          
           const purchaseHistory = JSON.parse(localStorage.getItem("history") || "[]");
           purchaseHistory.push({
             ...product,
-            size: selectedSize,
+            sizes: [selectedSize], // ✅ Ensure consistency with Order interface
             name: formData.name,
             mobile: formData.mobile,
             address: formData.address,
             pincode: formData.pincode,
             paymentId: response.razorpay_payment_id,
           });
+      
           localStorage.setItem("history", JSON.stringify(purchaseHistory));
           router.push("/success");
         },
-        prefill: { name: formData.name, contact: formData.mobile },
+        prefill: { 
+          name: formData.name, 
+          contact: formData.mobile 
+        },
         theme: { color: "#3399cc" },
       };
-
+      
       const rzp1 = new window.Razorpay(options);
       rzp1.open();
+      
     } catch (error) {
       console.error("Payment failed", error);
     } finally {
@@ -1620,7 +1626,7 @@ const ProductPage = () => {
 
       <div className="w-full lg:w-1/2 bg-white rounded-lg shadow-lg p-6">
         <h1 className="text-2xl font-bold">{product.name}</h1>
-        <p className="text-gray-700 text-lg">Price: ₹{product.price.toLocaleString("en-IN")}</p>
+        <p className="text-gray-700 text-lg">  Price: ₹{Number(product.price || 0).toLocaleString("en-IN")}</p>
         <p className="text-red-500 font-semibold">Stock Left: {stockLeft}</p>
         <p className="text-gray-500">Expected Delivery: {product.deliveryTime}</p>
 
